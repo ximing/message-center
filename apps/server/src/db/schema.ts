@@ -68,6 +68,27 @@ export const apiKeys = pgTable(
   ],
 );
 
+export const accessTokens = pgTable(
+  'access_tokens',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    name: varchar('name', { length: 64 }).notNull(),
+    tokenHash: varchar('token_hash', { length: 64 }).notNull(),
+    tokenEncrypted: text('token_encrypted').notNull(),
+    tokenPreview: varchar('token_preview', { length: 32 }).notNull(),
+    lastUsedAt: timestamptz('last_used_at'),
+    revokedAt: timestamptz('revoked_at'),
+    createdAt: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    index('idx_access_tokens_user').on(t.userId),
+    uniqueIndex('access_tokens_hash_uidx').on(t.tokenHash),
+  ],
+);
+
 export const connections = pgTable(
   'connections',
   {
@@ -184,6 +205,7 @@ export const deliveries = pgTable(
 
 export type UserRow = typeof users.$inferSelect;
 export type ApiKeyRow = typeof apiKeys.$inferSelect;
+export type AccessTokenRow = typeof accessTokens.$inferSelect;
 export type ConnectionRow = typeof connections.$inferSelect;
 export type ForwardRuleRow = typeof forwardRules.$inferSelect;
 export type InboundMessageRow = typeof inboundMessages.$inferSelect;

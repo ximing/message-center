@@ -1,6 +1,7 @@
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import Fastify, { type FastifyInstance } from 'fastify';
+import { registerAccessTokenRoutes } from './auth/access-tokens.routes.js';
 import { authenticate } from './auth/authenticate.js';
 import { registerAuthRoutes } from './auth/auth.routes.js';
 import { config } from './config.js';
@@ -54,6 +55,7 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
 
   app.get('/health', async () => ({ ok: true }));
   registerAuthRoutes(app);
+  registerAccessTokenRoutes(app);
   registerApiKeyRoutes(app);
   registerConnectionRoutes(app);
   registerRuleRoutes(app);

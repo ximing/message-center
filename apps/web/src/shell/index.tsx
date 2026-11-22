@@ -16,6 +16,7 @@ const LINKS: Array<{ to: string; label: string; icon: IconName }> = [
   { to: "/rules", label: "转发规则", icon: "route" },
   { to: "/connections", label: "目的地连接", icon: "layers" },
   { to: "/keys", label: "接入密钥", icon: "key" },
+  { to: "/tokens", label: "接口令牌", icon: "lock" },
 ];
 
 export const Shell = observer(function Shell() {

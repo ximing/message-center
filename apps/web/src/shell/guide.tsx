@@ -30,7 +30,13 @@ export const Guide = observer(function Guide() {
           <p>eventId 在当前账号下必须唯一，重复上报不会新增投递。</p>
         </section>
         <section>
-          <h3>3. 添加目的地与规则</h3>
+          <h3>3. 给 agent 发接口令牌</h3>
+          <p>
+            在接口令牌页面创建 mct_ 令牌，写入环境变量 MC_TOKEN。它能管理钥匙、连接、规则和消息，不能代替 mck_ 上报。退出登录不会吊销它。
+          </p>
+        </section>
+        <section>
+          <h3>4. 添加目的地与规则</h3>
           <p>
             先验证目的地连接，再配置匹配条件。没有命中规则的消息会保留为「未匹配」，新规则仅作用于后续消息。
           </p>

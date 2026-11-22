@@ -2,6 +2,8 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { UserRow } from '../db/schema.js';
 import { AppError } from '../errors.js';
 import type { AuthPrincipal } from '../types.js';
+import { isPersonalAccessToken } from './access-token-logic.js';
+import { findActiveAccessToken, touchAccessToken } from './access-tokens.js';
 import { getUserById, issueAuthCookies } from './auth.service.js';
 import { headerString, readBearerToken } from './bearer.js';
 import { ACCESS_COOKIE_NAME, REFRESH_COOKIE_NAME, readSignedCookie } from './cookies.js';
@@ -21,13 +23,24 @@ async function userFromToken(
   }
 }
 
-/** Bearer access JWT, else access cookie (refresh cookie silently rotates it). */
+async function principalFromBearer(token: string): Promise<AuthPrincipal | undefined> {
+  if (isPersonalAccessToken(token)) {
+    const found = await findActiveAccessToken(token);
+    if (!found) return undefined;
+    await touchAccessToken(found.id);
+    return { id: found.userId, accessTokenId: found.id };
+  }
+  const user = await userFromToken(token, 'access');
+  return user ? { id: user.id } : undefined;
+}
+
+/** Bearer interface token or access JWT, else access cookie (refresh cookie silently rotates it). */
 export async function authenticate(req: FastifyRequest, reply: FastifyReply): Promise<void> {
   const bearer = readBearerToken(headerString(req.headers.authorization));
   if (bearer) {
-    const user = await userFromToken(bearer, 'access');
-    if (user) {
-      req.user = { id: user.id };
+    const principal = await principalFromBearer(bearer);
+    if (principal) {
+      req.user = principal;
       return;
     }
     throw AppError.of(401, 'INVALID_TOKEN');

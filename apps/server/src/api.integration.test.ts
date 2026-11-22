@@ -1103,6 +1103,113 @@ describe.skipIf(!dbCtx.available)("http api", () => {
     expect(body.siteName).toBe("Webhook");
     expect(body.byline).toBe("ada · general");
   });
+
+  it("lets an interface token manage the account and keeps it off ingest", async () => {
+    const user = await registerUser();
+    const other = await registerUser();
+    const created = await server().inject({
+      method: "POST",
+      url: "/api/me/access-tokens",
+      headers: bearer(user.access),
+      payload: { name: "agent" },
+    });
+    expect(created.statusCode).toBe(201);
+    const token = (created.json() as { token: string; id: string }).token;
+    const id = (created.json() as { id: string }).id;
+    expect(token.startsWith("mct_")).toBe(true);
+
+    const listed = await server().inject({
+      method: "GET",
+      url: "/api/me/access-tokens",
+      headers: bearer(token),
+    });
+    expect(listed.statusCode).toBe(200);
+    const rows = listed.json() as Array<{ id: string; preview: string }>;
+    expect(rows).toHaveLength(1);
+    expect(rows[0]?.id).toBe(id);
+    expect(rows[0]).not.toHaveProperty("token");
+    expect(rows[0]?.preview.startsWith("mct_")).toBe(true);
+
+    const me = await server().inject({
+      method: "GET",
+      url: "/api/auth/me",
+      headers: bearer(token),
+    });
+    expect(me.statusCode).toBe(200);
+    expect(me.json()).toMatchObject({ id: user.id, email: user.email });
+
+    const rules = await server().inject({
+      method: "GET",
+      url: "/api/me/rules",
+      headers: bearer(token),
+    });
+    expect(rules.statusCode).toBe(200);
+
+    const ingest = await postWechat(token, { content: "via pat", msgSvrId: 8801 });
+    expect(ingest.statusCode).toBe(401);
+    expect(errorCode(ingest)).toBe("INVALID_APP_KEY");
+
+    const key = await createKey(user.access, "ingest-only");
+    const managed = await server().inject({
+      method: "GET",
+      url: "/api/me/rules",
+      headers: bearer(key.token),
+    });
+    expect(managed.statusCode).toBe(401);
+    expect(errorCode(managed)).toBe("INVALID_TOKEN");
+
+    const revealed = await server().inject({
+      method: "POST",
+      url: `/api/me/access-tokens/${id}/reveal`,
+      headers: bearer(user.access),
+    });
+    expect(revealed.json()).toEqual({ token });
+
+    const foreign = await server().inject({
+      method: "POST",
+      url: `/api/me/access-tokens/${id}/reveal`,
+      headers: bearer(other.access),
+    });
+    expect(foreign.statusCode).toBe(404);
+    expect(errorCode(foreign)).toBe("ACCESS_TOKEN_NOT_FOUND");
+
+    const out = await server().inject({
+      method: "POST",
+      url: "/api/auth/logout",
+      headers: bearer(user.access),
+    });
+    expect(out.statusCode).toBe(204);
+    const still = await server().inject({
+      method: "GET",
+      url: "/api/me/messages",
+      headers: bearer(token),
+    });
+    expect(still.statusCode).toBe(200);
+
+    const renamed = await server().inject({
+      method: "PATCH",
+      url: `/api/me/access-tokens/${id}`,
+      headers: bearer(token),
+      payload: { name: "agent-2" },
+    });
+    expect(renamed.statusCode).toBe(200);
+    expect(renamed.json()).toMatchObject({ id, name: "agent-2" });
+    expect(renamed.json()).not.toHaveProperty("token");
+
+    const removed = await server().inject({
+      method: "DELETE",
+      url: `/api/me/access-tokens/${id}`,
+      headers: bearer(token),
+    });
+    expect(removed.statusCode).toBe(204);
+    const denied = await server().inject({
+      method: "GET",
+      url: "/api/auth/me",
+      headers: bearer(token),
+    });
+    expect(denied.statusCode).toBe(401);
+    expect(errorCode(denied)).toBe("INVALID_TOKEN");
+  });
 });
 
 if (!dbCtx.available) {

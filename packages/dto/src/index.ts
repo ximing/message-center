@@ -23,6 +23,8 @@ export const messageKindSchema = z.enum(MESSAGE_KINDS);
 
 export const API_KEY_MAX_PER_USER = 20;
 export const API_KEY_PREFIX = "mck_";
+export const ACCESS_TOKEN_MAX_PER_USER = 20;
+export const ACCESS_TOKEN_PREFIX = "mct_";
 export const CONTENT_MAX_BYTES = 64 * 1024;
 
 export const registerInputSchema = z.object({
@@ -79,6 +81,16 @@ export const patchApiKeyInputSchema = createApiKeyInputSchema
     message: "at least one field required",
   });
 export type PatchApiKeyInput = z.infer<typeof patchApiKeyInputSchema>;
+
+export const createAccessTokenInputSchema = z.object({
+  name: z.string().trim().min(1).max(64),
+});
+export type CreateAccessTokenInput = z.infer<typeof createAccessTokenInputSchema>;
+
+export const patchAccessTokenInputSchema = z.object({
+  name: z.string().trim().min(1).max(64),
+});
+export type PatchAccessTokenInput = z.infer<typeof patchAccessTokenInputSchema>;
 
 export const createConnectionInputSchema = z.object({
   provider: providerSchema,

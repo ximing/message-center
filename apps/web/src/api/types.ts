@@ -13,6 +13,14 @@ export type ApiKey = {
   lastUsedAt?: string | null;
 };
 
+export type AccessToken = {
+  id: string;
+  name: string;
+  preview: string;
+  createdAt: string;
+  lastUsedAt?: string | null;
+};
+
 export type Provider = "inwit" | "vital" | "aimo";
 
 export const PROVIDERS: readonly Provider[] = ["inwit", "vital", "aimo"];

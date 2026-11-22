@@ -8,6 +8,8 @@ export const ERROR_MESSAGES = {
   INVALID_APP_KEY: "密钥无效",
   API_KEY_LIMIT: "最多 20 把密钥",
   API_KEY_NOT_FOUND: "密钥不存在",
+  ACCESS_TOKEN_LIMIT: "最多 20 个接口令牌",
+  ACCESS_TOKEN_NOT_FOUND: "接口令牌不存在",
   CONNECTION_REJECTED: "连接校验失败",
   CONNECTION_NOT_FOUND: "连接不存在",
   CONNECTION_IN_USE: "连接仍被规则或投递使用",

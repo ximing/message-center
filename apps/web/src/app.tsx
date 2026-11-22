@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation } from "react-router";
 import LoginPage from "@/pages/login";
 import KeysPage from "@/pages/keys";
+import TokensPage from "@/pages/tokens";
 import ConnectionsPage from "@/pages/connections";
 import RulesPage from "@/pages/rules";
 import MessagesPage from "@/pages/messages";
@@ -36,6 +37,7 @@ export const App = observer(function App() {
         <Route element={<Shell />}>
           <Route index element={<Navigate to="/messages" replace />} />
           <Route path="keys" element={<KeysPage />} />
+          <Route path="tokens" element={<TokensPage />} />
           <Route path="connections" element={<ConnectionsPage />} />
           <Route path="rules" element={<RulesPage />} />
           <Route path="messages" element={<MessagesPage />} />
