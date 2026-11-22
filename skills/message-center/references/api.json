@@ -1,0 +1,33 @@
+{
+  "endpoints": [
+    { "method": "GET", "path": "/health", "auth": "none" },
+    { "method": "GET", "path": "/api/auth/me", "auth": "token" },
+    { "method": "POST", "path": "/api/auth/register", "auth": "none" },
+    { "method": "POST", "path": "/api/auth/login", "auth": "none" },
+    { "method": "POST", "path": "/api/auth/refresh", "auth": "none" },
+    { "method": "POST", "path": "/api/auth/logout", "auth": "none" },
+    { "method": "GET", "path": "/api/auth/oidc/status", "auth": "none" },
+    { "method": "GET", "path": "/api/me/access-tokens", "auth": "token" },
+    { "method": "POST", "path": "/api/me/access-tokens", "auth": "token" },
+    { "method": "POST", "path": "/api/me/access-tokens/:id/reveal", "auth": "token" },
+    { "method": "PATCH", "path": "/api/me/access-tokens/:id", "auth": "token" },
+    { "method": "DELETE", "path": "/api/me/access-tokens/:id", "auth": "token" },
+    { "method": "GET", "path": "/api/me/api-keys", "auth": "token" },
+    { "method": "POST", "path": "/api/me/api-keys", "auth": "token" },
+    { "method": "POST", "path": "/api/me/api-keys/:id/reveal", "auth": "token" },
+    { "method": "PATCH", "path": "/api/me/api-keys/:id", "auth": "token" },
+    { "method": "DELETE", "path": "/api/me/api-keys/:id", "auth": "token" },
+    { "method": "GET", "path": "/api/me/connections", "auth": "token" },
+    { "method": "POST", "path": "/api/me/connections", "auth": "token" },
+    { "method": "PATCH", "path": "/api/me/connections/:id", "auth": "token" },
+    { "method": "DELETE", "path": "/api/me/connections/:id", "auth": "token" },
+    { "method": "GET", "path": "/api/me/rules", "auth": "token" },
+    { "method": "POST", "path": "/api/me/rules", "auth": "token" },
+    { "method": "PATCH", "path": "/api/me/rules/:id", "auth": "token" },
+    { "method": "DELETE", "path": "/api/me/rules/:id", "auth": "token" },
+    { "method": "GET", "path": "/api/me/messages", "auth": "token" },
+    { "method": "GET", "path": "/api/me/messages/:id", "auth": "token" },
+    { "method": "POST", "path": "/api/v1/ingest/wechat", "auth": "apikey" },
+    { "method": "POST", "path": "/api/v1/ingest/webhook", "auth": "apikey" }
+  ]
+}
