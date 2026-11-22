@@ -1,0 +1,32 @@
+.ingress-card .grow {
+  min-width: 0;
+}
+.endpoint .mono {
+  font-size: 10px;
+}
+.key-table .subline {
+  max-width: 280px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.key-table td:first-child {
+  min-width: 160px;
+}
+.key-table .actions {
+  min-width: 160px;
+}
+.token-display {
+  user-select: all;
+  white-space: pre-wrap;
+}
+.key-title {
+  overflow-wrap: anywhere;
+}
+.key-table .section-title h2 {
+  font-size: 16px;
+}
+.keys-limit {
+  font-size: 11px;
+  color: var(--amber);
+  margin-bottom: 12px;
+}

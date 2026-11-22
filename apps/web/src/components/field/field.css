@@ -1,0 +1,62 @@
+.field {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.field small {
+  color: #8e99ac;
+  font-weight: 400;
+  font-size: 11px;
+}
+.field .optional {
+  color: #9aa5b8;
+  font-size: 10px;
+  font-weight: 400;
+  margin-left: 5px;
+}
+.field-error {
+  color: var(--red);
+  font-size: 11px;
+  margin: 10px 0;
+}
+.field-group {
+  padding: 19px 17px;
+  background: #f8f9fd;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  margin-bottom: 20px;
+}
+.field-group .field:last-child {
+  margin-bottom: 0;
+}
+.field-group h3 {
+  font-size: 11px;
+  color: #8591a8;
+  margin-bottom: 16px;
+}
+.check-setting {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+.check-setting p {
+  font-size: 11px;
+  color: #8d98aa;
+  margin-top: 4px;
+}
+.scope-preview {
+  font-size: 11px;
+  color: #6d7aa1;
+  background: #eff2ff;
+  padding: 13px;
+  border-radius: 7px;
+  line-height: 1.9;
+}
+.scope-preview.warn {
+  color: #a26e2a;
+  background: #fff6e7;
+}

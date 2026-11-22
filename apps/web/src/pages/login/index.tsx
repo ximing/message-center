@@ -1,10 +1,19 @@
-import { Input } from "@/components/controls";
 import { bindServices, observer, useService } from "@rabjs/react";
 import { useEffect } from "react";
 import { Navigate, useLocation } from "react-router";
+import {
+  Button,
+  ChannelIcon,
+  ErrorNotice,
+  Field,
+  Icon,
+  Input,
+  Notice,
+  TextLink,
+  textLinkClass,
+} from "@/components";
 import { safeFrom } from "@/lib/text";
 import { AuthService } from "@/services/auth.service";
-import { ChannelIcon, ErrorNotice, Icon, Notice } from "@/components/ui";
 import { LoginPageService } from "./login.service";
 
 const LoginContent = observer(function LoginContent() {
@@ -81,8 +90,7 @@ const LoginContent = observer(function LoginContent() {
               }}
             >
               <fieldset disabled={busy}>
-                <label className="field">
-                  <span>邮箱</span>
+                <Field label="邮箱">
                   <Input
                     name="email"
                     type="email"
@@ -93,9 +101,8 @@ const LoginContent = observer(function LoginContent() {
                     value={service.email}
                     onChange={(e) => service.setEmail(e.target.value)}
                   />
-                </label>
-                <label className="field">
-                  <span>密码</span>
+                </Field>
+                <Field label="密码">
                   <Input
                     name="password"
                     type="password"
@@ -111,34 +118,29 @@ const LoginContent = observer(function LoginContent() {
                     value={service.password}
                     onChange={(e) => service.setPassword(e.target.value)}
                   />
-                </label>
+                </Field>
                 <ErrorNotice message={service.error || auth.bootError} />
-                <button className="btn primary" type="submit">
+                <Button variant="primary" type="submit">
                   {busy
                     ? "正在处理…"
                     : service.mode === "login"
                       ? "登录"
                       : "注册并登录"}
-                </button>
+                </Button>
               </fieldset>
             </form>
             {service.oidcEnabled && (
               <>
                 <div className="divider">或</div>
-                <button
-                  className="btn"
-                  disabled={busy}
-                  onClick={() => service.startOidc()}
-                >
+                <Button disabled={busy} onClick={() => service.startOidc()}>
                   <Icon name="shield" />
                   使用统一账号登录
-                </button>
+                </Button>
               </>
             )}
             <div className="login-toggle">
               {service.mode === "login" ? "还没有账号？" : "已有账号？"}{" "}
-              <button
-                className="text-link"
+              <TextLink
                 disabled={busy}
                 onClick={() =>
                   service.setMode(
@@ -147,12 +149,12 @@ const LoginContent = observer(function LoginContent() {
                 }
               >
                 {service.mode === "login" ? "创建账号" : "前往登录"}
-              </button>
+              </TextLink>
             </div>
             {window.location.hostname === "127.0.0.1" && (
               <Notice tone="amber">
                 本地开发请使用{" "}
-                <a className="text-link" href="http://localhost:5191/login">
+                <a className={textLinkClass()} href="http://localhost:5191/login">
                   localhost:5191
                 </a>{" "}
                 登录，以便保存会话。
@@ -168,4 +170,5 @@ const LoginContent = observer(function LoginContent() {
     </main>
   );
 });
+
 export default bindServices(LoginContent, [LoginPageService]);

@@ -1,0 +1,12 @@
+.footer-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #9aa3b4;
+  margin-top: 19px;
+}
+.footer-note svg {
+  width: 13px;
+  height: 13px;
+}

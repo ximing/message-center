@@ -2,8 +2,14 @@ import { observer, useService } from "@rabjs/react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import { AuthService } from "@/services/auth.service";
 import { UiService } from "@/services/ui.service";
-import { ErrorNotice, Guide, Icon, Notifications } from "@/components/ui";
-import type { IconName } from "@/components/icon";
+import {
+  ErrorNotice,
+  Icon,
+  IconButton,
+  Notifications,
+  type IconName,
+} from "@/components";
+import { Guide } from "./guide";
 
 const LINKS: Array<{ to: string; label: string; icon: IconName }> = [
   { to: "/messages", label: "消息记录", icon: "inbox" },
@@ -77,15 +83,14 @@ export const Shell = observer(function Shell() {
               <strong title={name}>{name}</strong>
               <small className="muted">个人账号</small>
             </div>
-            <button
-              className="icon-btn"
+            <IconButton
+              label="退出登录"
+              title="退出登录"
               disabled={auth.$model.logout.loading}
               onClick={() => void auth.logout()}
-              title="退出登录"
-              aria-label="退出登录"
             >
               <Icon name="logout" />
-            </button>
+            </IconButton>
           </div>
         </div>
       </aside>
@@ -107,14 +112,14 @@ export const Shell = observer(function Shell() {
                 day: "numeric",
               })}
             </span>
-            <button
-              className="icon-btn mobile-logout"
+            <IconButton
+              className="mobile-logout"
+              label="退出登录"
               disabled={auth.$model.logout.loading}
               onClick={() => void auth.logout()}
-              aria-label="退出登录"
             >
               <Icon name="logout" />
-            </button>
+            </IconButton>
           </div>
         </header>
         {auth.actionError && (

@@ -1,0 +1,51 @@
+.login-page {
+  min-height: 100dvh;
+  background: white;
+}
+.login-page > .login-layout {
+  min-height: 100dvh;
+}
+.login-art {
+  align-items: flex-start;
+}
+.login-art .brand {
+  padding: 0;
+  margin-bottom: 48px;
+}
+.login-art .brand-symbol {
+  width: 42px;
+  height: 42px;
+}
+.login-form .error-notice {
+  margin-top: 18px;
+}
+.login-form .notice {
+  font-size: 11px;
+  margin-top: 20px;
+}
+.login-footnote {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 30px;
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+.login-form .btn {
+  min-height: 41px;
+}
+.login-form .field {
+  margin-bottom: 20px;
+}
+.login-toggle {
+  font-size: 12px;
+}
+.login-art h1 {
+  max-width: 400px;
+}
+.login-art .login-map {
+  margin: 25px 0;
+}
+.profile button:disabled {
+  opacity: 0.4;
+}

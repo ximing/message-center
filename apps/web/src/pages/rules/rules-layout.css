@@ -1,0 +1,20 @@
+.rule-table .condition {
+  font-size: 11px;
+}
+.rule-table .subline {
+  max-width: 260px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.rule-info {
+  flex-wrap: wrap;
+}
+.rule-name {
+  overflow-wrap: anywhere;
+}
+.rule-table .disabled {
+  opacity: 0.7;
+}
+.rule-table td:first-child {
+  min-width: 180px;
+}

@@ -1,0 +1,20 @@
+@media (max-width: 700px) {
+  .messages th:first-child {
+    width: 49%;
+  }
+  .messages th:nth-child(2) {
+    width: 15%;
+  }
+  .messages th:nth-child(3) {
+    width: 36%;
+  }
+  .messages th:last-child {
+    width: 0;
+  }
+  .stat-caption {
+    font-size: 10px;
+  }
+  .list-head > .between .muted {
+    font-size: 11px;
+  }
+}

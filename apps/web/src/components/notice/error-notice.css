@@ -1,0 +1,22 @@
+.error-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 15px;
+  background: #fff1f2;
+  color: #a83142;
+  border: 1px solid #f2d4d9;
+  border-radius: 8px;
+  margin: 0 0 18px;
+  font-size: 12px;
+}
+.error-notice svg {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.error-notice .text-link {
+  white-space: nowrap;
+}
+.dialog-body .error-notice {
+  margin-top: 18px;
+}

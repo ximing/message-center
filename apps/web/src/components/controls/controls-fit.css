@@ -1,0 +1,56 @@
+.check-setting > .custom-switch,
+.check-setting > .custom-checkbox {
+  margin-top: 5px;
+}
+.field > .select-control {
+  width: 100%;
+}
+.filterbar > .select-control {
+  flex: 0 0 120px;
+  max-width: 135px;
+  font-size: 11px;
+}
+.filterbar .input-shell,
+.filterbar .select-trigger {
+  min-height: 36px;
+}
+.filterbar .control-input {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-size: 11px;
+}
+.filterbar .select-trigger {
+  padding: 8px 10px;
+}
+.field:has(.select-control) {
+  cursor: default;
+}
+@media (max-width: 700px) {
+  .filterbar > .select-control {
+    flex-basis: calc(50% - 5px);
+    max-width: none;
+  }
+  .select-option {
+    min-height: 42px;
+    padding: 10px;
+  }
+  .select-trigger {
+    min-height: 42px;
+  }
+  .password-action-text {
+    display: none;
+  }
+  .input-action {
+    padding: 0 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .input-shell,
+  .select-trigger,
+  .select-chevron,
+  .custom-switch,
+  .switch-thumb,
+  .custom-checkbox {
+    transition: none;
+  }
+}

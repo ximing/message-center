@@ -1,0 +1,18 @@
+.help-box {
+  margin-top: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 17px 20px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: #8b96a9;
+  font-size: 11px;
+}
+.help-box svg {
+  color: #8c9ad1;
+}
+.help-box strong {
+  color: #68768e;
+  font-weight: 500;
+}

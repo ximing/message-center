@@ -1,0 +1,23 @@
+:focus-visible {
+  outline: 3px solid #9ca7ff;
+  outline-offset: 3px;
+}
+input,
+select,
+textarea {
+  background: white;
+  border: 1px solid #dfe4ee;
+  border-radius: 7px;
+  padding: 9px 11px;
+  min-width: 0;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid #dfe3ff;
+  border-color: var(--primary);
+}
+textarea {
+  resize: vertical;
+  min-height: 86px;
+}

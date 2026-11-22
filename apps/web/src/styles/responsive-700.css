@@ -1,0 +1,77 @@
+@media (max-width: 700px) {
+  .sidebar .nav button span {
+    display: none;
+  }
+  .sidebar .nav button {
+    padding: 12px;
+    justify-content: center;
+  }
+  .page-heading > div:first-child {
+    flex-basis: 100%;
+  }
+  .heading-tools {
+    flex-wrap: wrap;
+  }
+  .shell main.content {
+    min-height: calc(100vh - 57px);
+  }
+  .pagination {
+    gap: 4px;
+  }
+  .stat-value {
+    font-size: 24px;
+  }
+  .table-footer {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .login-page .login-art {
+    padding: 24px;
+  }
+  .message-row .sender-btn {
+    font-size: 10px;
+  }
+  .message-row .sender,
+  .message-row .subline {
+    max-width: 86px !important;
+  }
+  .message-row .row {
+    gap: 5px;
+  }
+  .delivery-chips .pill {
+    font-size: 9px;
+  }
+  .detail-panel {
+    min-width: 0;
+  }
+  .notice p {
+    overflow-wrap: anywhere;
+  }
+  .topbar .breadcrumb {
+    min-width: 0;
+  }
+  .page-error {
+    padding: 15px;
+  }
+  .message-workbench {
+    gap: 17px;
+  }
+  .login-page .brand strong {
+    display: block;
+  }
+  .login-page .brand small {
+    display: block;
+  }
+  .login-page .brand {
+    padding: 0;
+  }
+  .profile {
+    padding-left: 6px;
+  }
+  .connection-head {
+    gap: 10px;
+  }
+  .flow-note {
+    display: none;
+  }
+}

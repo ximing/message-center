@@ -1,0 +1,31 @@
+/* Keep supporting information readable on high-density displays. */
+:root {
+  --muted: #69768d;
+}
+.subline,
+.time,
+.stat-label,
+.stat-note,
+.detail-meta dt,
+.detail-section h3,
+.delivery p,
+.table-footer,
+.connection-meta dt,
+.connection-head p,
+.field small,
+.field-group small,
+.rule-info,
+.count-label {
+  color: #69768d;
+}
+th {
+  color: #69768d;
+  font-size: 11px;
+}
+.subline,
+.time,
+.stat-note,
+.detail-bottom,
+.table-footer {
+  font-size: 11px;
+}

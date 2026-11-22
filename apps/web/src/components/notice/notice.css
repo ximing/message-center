@@ -1,0 +1,27 @@
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #eff2ff;
+  border: 1px solid #e1e6fe;
+  border-radius: 8px;
+  padding: 13px 16px;
+  color: #6775b0;
+  font-size: 12px;
+  margin-bottom: 22px;
+}
+.notice svg {
+  margin-top: 1px;
+  width: 16px;
+}
+.notice.amber {
+  background: #fff8ee;
+  border-color: #f2e5ce;
+  color: #aa7a36;
+}
+.notice p {
+  line-height: 1.8;
+}
+.notice strong {
+  font-weight: 600;
+}

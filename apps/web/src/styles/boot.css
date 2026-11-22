@@ -1,0 +1,9 @@
+.boot {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+.boot .brand-symbol {
+  margin: 0 auto 20px;
+}

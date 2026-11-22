@@ -1,0 +1,9 @@
+.dialog-body > form {
+  margin: 0;
+}
+.dialog-body fieldset {
+  display: block;
+}
+.dialog-foot .delete-action {
+  margin-right: auto;
+}

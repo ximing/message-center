@@ -1,0 +1,35 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 5px;
+  padding: 3px 7px;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: #f0f3f8;
+  color: #7a869b;
+}
+.pill.green {
+  background: #edf8f2;
+  color: var(--green);
+}
+.pill.red {
+  background: #fdf0f1;
+  color: var(--red);
+}
+.pill.amber {
+  background: #fff5e9;
+  color: var(--amber);
+}
+.pill.blue {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
+}

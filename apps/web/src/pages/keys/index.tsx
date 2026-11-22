@@ -1,18 +1,19 @@
-import { Input, Textarea } from "@/components/controls";
 import { bindServices, observer, useService } from "@rabjs/react";
 import { useEffect } from "react";
 import {
+  Button,
   ChannelIcon,
-  ConfirmDialog,
-  Dialog,
   EmptyState,
   ErrorNotice,
+  HelpBox,
   Icon,
   Loading,
-  Notice,
   PageHeader,
-} from "@/components/ui";
+  Panel,
+  TextLink,
+} from "@/components";
 import { formatTime } from "@/lib/text";
+import { KeyDialogs } from "./key-dialogs";
 import { KeysPageService } from "./keys.service";
 
 const KeysContent = observer(function KeysContent() {
@@ -27,18 +28,18 @@ const KeysContent = observer(function KeysContent() {
         title="接入密钥"
         description="为微信模块和 Webhook 创建凭证，统一接收你的消息。"
       >
-        <button
-          className="btn primary"
+        <Button
+          variant="primary"
           onClick={() => service.edit()}
           disabled={!service.loaded || service.items.length >= 20}
         >
           <Icon name="plus" />
           创建密钥
-        </button>
+        </Button>
       </PageHeader>
       <div className="intro-grid">
         {(["wechat", "webhook"] as const).map((p) => (
-          <div className="panel ingress-card" key={p}>
+          <Panel as="div" className="ingress-card" key={p}>
             <ChannelIcon provider={p} />
             <div className="grow">
               <h3>{p === "wechat" ? "微信模块" : "Webhook"}</h3>
@@ -52,11 +53,11 @@ const KeysContent = observer(function KeysContent() {
                 <span className="mono">/api/v1/ingest/{p}</span>
               </div>
             </div>
-          </div>
+          </Panel>
         ))}
       </div>
       <ErrorNotice message={service.error} retry={() => void service.load()} />
-      <section className="panel">
+      <Panel>
         <div className="section-title between">
           <h2>
             账号密钥{" "}
@@ -66,9 +67,9 @@ const KeysContent = observer(function KeysContent() {
                 : "加载中"}
             </span>
           </h2>
-          <button className="text-link" onClick={() => service.ui.openGuide()}>
+          <TextLink onClick={() => service.ui.openGuide()}>
             接入指南 <Icon name="arrow-up" />
-          </button>
+          </TextLink>
         </div>
         {!service.loaded ? (
           <Loading />
@@ -78,9 +79,9 @@ const KeysContent = observer(function KeysContent() {
             title="还没有接入密钥"
             description="创建一把密钥，开始接收微信或 Webhook 消息。"
           >
-            <button className="btn primary" onClick={() => service.edit()}>
+            <Button variant="primary" onClick={() => service.edit()}>
               创建第一把密钥
-            </button>
+            </Button>
           </EmptyState>
         ) : (
           <div className="table-wrap">
@@ -109,24 +110,18 @@ const KeysContent = observer(function KeysContent() {
                     </td>
                     <td className="time">{formatTime(item.createdAt)}</td>
                     <td className="actions">
-                      <button
-                        className="text-link"
-                        onClick={() => void service.reveal(item)}
-                      >
+                      <TextLink onClick={() => void service.reveal(item)}>
                         显示
-                      </button>
-                      <button
-                        className="text-link"
-                        onClick={() => service.edit(item)}
-                      >
+                      </TextLink>
+                      <TextLink onClick={() => service.edit(item)}>
                         编辑
-                      </button>
-                      <button
-                        className="text-link danger"
+                      </TextLink>
+                      <TextLink
+                        className="danger"
                         onClick={() => service.confirmRevoke(item)}
                       >
                         吊销
-                      </button>
+                      </TextLink>
                     </td>
                   </tr>
                 ))}
@@ -134,127 +129,14 @@ const KeysContent = observer(function KeysContent() {
             </table>
           </div>
         )}
-      </section>
-      <div className="help-box">
-        <Icon name="shield" />
-        <div>
-          <strong>一套密钥，两个上报渠道</strong>
-          <p>
-            每把 mck_ 密钥都可以用于微信和
-            Webhook，也可以分别创建以便管理。密钥只能上报消息，不能读取消息或修改规则。
-          </p>
-        </div>
-      </div>
-      <Dialog
-        open={service.editorOpen}
-        title={service.editingId ? "编辑接入密钥" : "创建接入密钥"}
-        onClose={() => service.closeEditor()}
-        busy={service.saving}
-        footer={
-          <>
-            <button
-              className="btn"
-              disabled={service.saving}
-              onClick={() => service.closeEditor()}
-            >
-              取消
-            </button>
-            <button
-              className="btn primary"
-              type="submit"
-              form="key-form"
-              disabled={service.saving}
-            >
-              {service.saving
-                ? "正在保存…"
-                : service.editingId
-                  ? "保存修改"
-                  : "创建密钥"}
-            </button>
-          </>
-        }
-      >
-        <p className="muted form-intro">
-          用名称和备注区分设备或调用方。每把密钥均可用于微信与 Webhook。
-        </p>
-        <form
-          id="key-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            void service.save();
-          }}
-        >
-          <fieldset disabled={service.saving}>
-            <label className="field">
-              <span>密钥名称</span>
-              <Input
-                autoFocus
-                required
-                maxLength={64}
-                placeholder="例如：主力手机"
-                value={service.form.name}
-                onChange={(e) => service.changeForm({ name: e.target.value })}
-              />
-            </label>
-            <label className="field">
-              <span>
-                备注 <span className="optional">可选</span>
-              </span>
-              <Textarea
-                maxLength={500}
-                placeholder="这把密钥用在哪里？"
-                value={service.form.note}
-                onChange={(e) => service.changeForm({ note: e.target.value })}
-              />
-            </label>
-          </fieldset>
-          <ErrorNotice message={service.formError} />
-        </form>
-        <Notice>
-          密钥仅有上报权限。登录后可以再次显示或吊销，不绑定具体微信身份和渠道。
-        </Notice>
-      </Dialog>
-      <Dialog
-        open={service.tokenOpen}
-        title="完整接入密钥"
-        onClose={() => service.closeToken()}
-        footer={
-          <button className="btn primary" onClick={() => service.closeToken()}>
-            完成并隐藏
-          </button>
-        }
-      >
-        <h3>{service.tokenName}</h3>
-        <p className="muted form-intro">
-          复制后填入微信模块或 Webhook 调用方，关闭此窗口会隐藏完整密钥。
-        </p>
-        {service.revealing && <Loading text="正在读取密钥…" />}
-        <ErrorNotice message={service.tokenError} />
-        {service.token && (
-          <>
-            <pre className="token-display mono" tabIndex={0}>
-              {service.token}
-            </pre>
-            <button className="btn" onClick={() => void service.copyToken()}>
-              <Icon name="copy" />
-              {service.copied ? "已复制" : "复制密钥"}
-            </button>
-          </>
-        )}
-      </Dialog>
-      <ConfirmDialog
-        open={!!service.revokeTarget}
-        title="吊销这把密钥？"
-        onClose={() => service.confirmRevoke(null)}
-        onConfirm={() => void service.revoke()}
-        busy={service.saving}
-        error={service.confirmError}
-        action="确认吊销"
-      >
-        使用「{service.revokeTarget?.name}」的微信模块和 Webhook
-        将立即无法上报，其他密钥不受影响。此操作无法撤销；微信模块需更换密钥并重新打包。
-      </ConfirmDialog>
+      </Panel>
+      <HelpBox icon="shield" title="一套密钥，两个上报渠道">
+        每把 mck_ 密钥都可以用于微信和
+        Webhook，也可以分别创建以便管理。密钥只能上报消息，不能读取消息或修改规则。
+      </HelpBox>
+      <KeyDialogs />
     </>
   );
 });
+
 export default bindServices(KeysContent, [KeysPageService]);

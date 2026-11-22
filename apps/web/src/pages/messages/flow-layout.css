@@ -1,0 +1,9 @@
+.flow-hub {
+  flex-shrink: 0;
+}
+.flow-end {
+  white-space: nowrap;
+}
+.stat-value {
+  font-variant-numeric: tabular-nums;
+}

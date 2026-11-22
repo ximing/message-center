@@ -1,0 +1,25 @@
+@media (max-width: 1000px) {
+  .login-page .login-art {
+    display: flex;
+    padding: 28px 35px;
+    background: #f5f7ff;
+  }
+  .login-page .login-art .brand {
+    margin-bottom: 0;
+  }
+  .login-page .login-art h1,
+  .login-page .login-art > p,
+  .login-page .login-art .login-map {
+    display: none;
+  }
+  .login-page .login-layout {
+    display: flex;
+    flex-direction: column;
+  }
+  .login-form-wrap {
+    flex: 1;
+  }
+  .detail-section:nth-child(3) {
+    grid-column: 1/-1;
+  }
+}

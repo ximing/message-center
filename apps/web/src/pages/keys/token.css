@@ -1,0 +1,8 @@
+.token-display {
+  background: #f2f5fb;
+  padding: 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  word-break: break-all;
+  font-size: 12px;
+}

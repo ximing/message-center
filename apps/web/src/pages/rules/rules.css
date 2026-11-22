@@ -1,0 +1,36 @@
+.route {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  font-size: 11px;
+}
+.condition {
+  border: 1px solid #e4e9f3;
+  border-radius: 5px;
+  padding: 3px 7px;
+  background: #fafbfe;
+  max-width: 240px;
+  overflow-wrap: anywhere;
+}
+.rule-name {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.rule-info {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 10px;
+  color: #8f99ac;
+}
+.rule-table td {
+  padding: 19px 20px;
+}
+.rule-table .disabled {
+  opacity: 0.52;
+}
+.section-caption {
+  margin: 26px 0 12px;
+  color: #8a96a9;
+  font-size: 11px;
+}

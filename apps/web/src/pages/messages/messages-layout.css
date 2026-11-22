@@ -1,0 +1,40 @@
+.detail-id {
+  margin-top: 6px;
+  font-size: 10px;
+}
+.detail-section h3.body-title {
+  margin-top: 20px;
+}
+.delivery-section-title {
+  margin-bottom: 18px;
+  font-size: 10px;
+}
+.delivery-section-title h3 {
+  margin: 0;
+}
+.new-rule-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 11px;
+}
+.messages .time {
+  max-width: 110px;
+}
+.message-row td {
+  font-size: 11px;
+}
+.message-row .sender {
+  max-width: 175px;
+}
+.messages th:first-child {
+  width: 36%;
+}
+.messages th:nth-child(2) {
+  width: 9%;
+}
+.messages th:nth-child(3) {
+  width: 36%;
+}
+.messages th:last-child {
+  width: 19%;
+}

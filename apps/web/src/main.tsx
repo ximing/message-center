@@ -1,3 +1,4 @@
+import "@/styles/index.css";
 import { register, resolve, RSRoot } from "@rabjs/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -6,8 +7,6 @@ import { setUnauthorizedHandler } from "@/api/http";
 import { App } from "@/app";
 import { UiService } from "@/services/ui.service";
 import { AuthService } from "@/services/auth.service";
-import "@/styles.css";
-import "@/components/controls/controls.css";
 
 register(AuthService);
 register(UiService);

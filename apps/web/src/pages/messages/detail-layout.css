@@ -1,0 +1,71 @@
+.message-detail-empty {
+  padding: 60px 22px;
+}
+.message-row .sender {
+  font-family: inherit;
+}
+.message-row .sender-btn {
+  display: block;
+  padding: 0;
+  text-align: left;
+  font-size: 12px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.message-row .sender-btn:focus-visible {
+  outline-offset: 2px;
+}
+.delivery-chips .pill {
+  font-size: 10px;
+}
+.body-preview {
+  max-height: 320px;
+  overflow: auto;
+}
+.detail-meta {
+  margin-bottom: 0;
+}
+.detail-meta dd {
+  min-width: 0;
+}
+.delivery .delivery-code {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.delivery.failed .text-link {
+  font-size: 11px;
+  display: inline-block;
+  margin-top: 8px;
+}
+.delivery-head .row {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.delivery-title {
+  overflow-wrap: anywhere;
+}
+.delivery.pending:before {
+  content: "·";
+  background: #fff1dd;
+  color: var(--amber);
+}
+.stat-caption {
+  font-size: 11px;
+  color: var(--muted);
+  margin: -12px 0 18px;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.pagination button {
+  width: 25px;
+  height: 25px;
+}
+.pagination .prev svg {
+  transform: rotate(180deg);
+}

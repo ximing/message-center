@@ -1,0 +1,39 @@
+.nav button {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 14px;
+  border-radius: 7px;
+  color: #67738a;
+  text-align: left;
+  width: 100%;
+}
+.nav button:hover {
+  background: #f0f3f9;
+}
+.brand {
+  flex-shrink: 0;
+}
+.profile .grow,
+.workspace .grow {
+  min-width: 0;
+}
+.profile strong,
+.profile small,
+.workspace small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.workspace strong {
+  font-size: 11px;
+  font-weight: 500;
+}
+.shell main.content {
+  min-height: calc(100vh - 68px);
+}

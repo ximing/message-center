@@ -1,0 +1,129 @@
+/* One visual language for text editing, selection and binary controls. */
+.text-control {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  gap: 7px;
+  font-weight: 400;
+}
+.input-shell {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  border: 1px solid #dfe4ee;
+  border-radius: 8px;
+  background: #fff;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.input-shell:hover {
+  border-color: #b9c3d8;
+}
+.input-shell:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px #4f5fe715;
+}
+.input-shell.is-invalid {
+  border-color: var(--red);
+}
+.input-shell.is-invalid:focus-within {
+  box-shadow: 0 0 0 3px #c64b5312;
+}
+.input-shell:has(:disabled) {
+  background: #f4f6fa;
+  border-color: #e3e7ef;
+  color: #8c97a9;
+}
+.input-shell > .control-input,
+.input-shell > .control-textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+  padding: 10px 12px;
+  line-height: 1.5;
+  font: inherit;
+  color: var(--ink);
+}
+.input-shell > .control-input:focus,
+.input-shell > .control-textarea:focus {
+  outline: none;
+  border: 0;
+  box-shadow: none;
+}
+.input-shell > .control-input:disabled,
+.input-shell > .control-textarea:disabled {
+  color: #8793a7;
+  background: transparent;
+}
+.control-input::placeholder,
+.control-textarea::placeholder {
+  color: #9ba5b6;
+}
+.control-input::-webkit-search-cancel-button,
+.control-input::-webkit-search-decoration {
+  appearance: none;
+}
+.control-input::-ms-reveal {
+  display: none;
+}
+.input-leading {
+  display: grid;
+  place-items: center;
+  margin-left: 12px;
+  color: #8c98ad;
+  flex-shrink: 0;
+}
+.input-shell .input-leading svg {
+  position: static;
+  width: 16px;
+  height: 16px;
+}
+.input-leading + .control-input {
+  padding-left: 9px;
+}
+.input-action {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-shrink: 0;
+  align-self: stretch;
+  padding: 0 11px;
+  color: #6e7da0;
+  border-left: 1px solid #edf0f7;
+  font-size: 11px;
+  border-radius: 0 7px 7px 0;
+}
+.input-action:hover:not(:disabled) {
+  color: var(--primary);
+  background: #f4f6ff;
+}
+.input-action svg {
+  width: 16px;
+  height: 16px;
+}
+.textarea-shell {
+  align-items: stretch;
+}
+.input-shell > .control-textarea {
+  min-height: 104px;
+  resize: vertical;
+  line-height: 1.8;
+}
+.control-error {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--red);
+  font-weight: 400;
+}

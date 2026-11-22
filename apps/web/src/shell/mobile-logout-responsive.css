@@ -1,0 +1,8 @@
+@media (max-width: 700px) {
+  .mobile-logout {
+    display: inline-grid;
+  }
+  .topbar .preview-label {
+    display: none;
+  }
+}

@@ -1,14 +1,8 @@
 import { createPortal } from "react-dom";
-import {
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type KeyboardEvent,
-} from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { Icon } from "../icon";
+import { onSelectKeyDown } from "./select-keyboard";
+import { useSelectPosition } from "./select-position";
 
 export interface SelectOption {
   value: string;
@@ -71,53 +65,7 @@ export function Select({
     if (restoreFocus) trigger.current?.focus();
   };
 
-  // The popup is portaled out of scrolling containers, but never out of a modal dialog.
-  useLayoutEffect(() => {
-    if (!open) return;
-    const reposition = () => {
-      if (!trigger.current) return;
-      const rect = trigger.current.getBoundingClientRect();
-      const viewport = window.visualViewport;
-      const viewTop = viewport?.offsetTop ?? 0;
-      const viewLeft = viewport?.offsetLeft ?? 0;
-      const viewHeight = viewport?.height ?? window.innerHeight;
-      const viewWidth = viewport?.width ?? window.innerWidth;
-      const below = viewTop + viewHeight - rect.bottom - 12;
-      const above = rect.top - viewTop - 12;
-      const upward = below < 200 && above > below;
-      const maxHeight = Math.max(60, Math.min(280, upward ? above : below));
-      const width = Math.min(Math.max(rect.width, 170), viewWidth - 24);
-      const left = Math.max(
-        viewLeft + 12,
-        Math.min(rect.left, viewLeft + viewWidth - width - 12),
-      );
-      setPosition({
-        position: "fixed",
-        left,
-        width,
-        maxHeight,
-        ...(upward
-          ? { top: "auto", bottom: window.innerHeight - rect.top + 6 }
-          : { top: rect.bottom + 6, bottom: "auto" }),
-      });
-    };
-    reposition();
-    const resize = new ResizeObserver(reposition);
-    if (trigger.current) resize.observe(trigger.current);
-    window.addEventListener("resize", reposition);
-    // Don't reposition in response to the listbox's own keyboard scrolling.
-    const onScroll = (event: Event) => {
-      if (!list.current?.contains(event.target as Node)) reposition();
-    };
-    window.addEventListener("scroll", onScroll, true);
-    window.visualViewport?.addEventListener("resize", reposition);
-    return () => {
-      resize.disconnect();
-      window.removeEventListener("resize", reposition);
-      window.removeEventListener("scroll", onScroll, true);
-      window.visualViewport?.removeEventListener("resize", reposition);
-    };
-  }, [open]);
+  useSelectPosition(open, trigger, list, setPosition);
 
   useEffect(() => {
     if (open && unavailable()) setOpen(false);
@@ -139,92 +87,19 @@ export function Select({
         ?.scrollIntoView({ block: "nearest" });
   }, [open, active, id]);
 
-  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (unavailable() || event.nativeEvent.isComposing) return;
-    const key = event.key;
-    if (key === "Escape" && open) {
-      event.preventDefault();
-      event.stopPropagation();
-      setOpen(false);
-      return;
-    }
-    if (key === "Tab") {
-      if (open) {
-        if (active >= 0) choose(active, false);
-        else setOpen(false);
-      }
-      return;
-    }
-    if (
-      [
-        "Enter",
-        " ",
-        "ArrowDown",
-        "ArrowUp",
-        "Home",
-        "End",
-        "PageDown",
-        "PageUp",
-      ].includes(key)
-    ) {
-      event.preventDefault();
-      if (key === "Enter" || key === " ") {
-        if (open) choose(active);
-        else show();
-        return;
-      }
-      if (key === "Home" || key === "End") {
-        const index = key === "Home" ? enabled[0] : enabled.at(-1);
-        if (open) setActive(index ?? -1);
-        else show(index);
-        return;
-      }
-      if (event.altKey && key === "ArrowUp" && open) {
-        choose(active);
-        return;
-      }
-      if (!open) {
-        show();
-        return;
-      }
-      const offset =
-        key === "PageDown"
-          ? 10
-          : key === "PageUp"
-            ? -10
-            : key === "ArrowDown"
-              ? 1
-              : -1;
-      setActive(
-        enabled[
-          Math.max(
-            0,
-            Math.min(enabled.length - 1, enabled.indexOf(active) + offset),
-          )
-        ] ?? -1,
-      );
-      return;
-    }
-    if (key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
-      event.preventDefault();
-      const now = Date.now();
-      const text =
-        now - typeahead.current.time < 700 ? typeahead.current.text + key : key;
-      typeahead.current = { text, time: now };
-      const query = Array.from(text).every((char) => char === key) ? key : text;
-      const indexes = [
-        ...enabled.filter((index) => index > active),
-        ...enabled.filter((index) => index <= active),
-      ];
-      const found = indexes.find((index) =>
-        options[index]?.label
-          .toLocaleLowerCase()
-          .startsWith(query.toLocaleLowerCase()),
-      );
-      if (!open) setOpen(true);
-      if (found !== undefined) setActive(found);
-    }
-  };
+  const onKeyDown = (event: Parameters<typeof onSelectKeyDown>[0]) =>
+    onSelectKeyDown(event, {
+      open,
+      active,
+      enabled,
+      options,
+      unavailable,
+      show,
+      choose,
+      setOpen,
+      setActive,
+      typeahead,
+    });
   const host = trigger.current?.closest("dialog") ?? document.body;
   return (
     <span className={`select-control ${className}`}>

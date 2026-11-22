@@ -1,0 +1,19 @@
+.simulation-card {
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+.simulation-card.excluded {
+  opacity: 0.6;
+}
+.simulation-card p {
+  font-size: 11px;
+  margin-top: 10px;
+  color: var(--muted);
+}
+.simulation-card h3 {
+  overflow-wrap: anywhere;
+}
+.simulation-result {
+  margin-top: 20px;
+}

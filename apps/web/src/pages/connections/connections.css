@@ -1,0 +1,91 @@
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.connection {
+  padding: 23px;
+  position: relative;
+}
+.connection.invalid {
+  border-color: #edccd0;
+}
+.connection-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.connection-head .provider {
+  width: 44px;
+  height: 44px;
+  font-size: 27px;
+  border-radius: 12px;
+}
+.connection-head p {
+  font-size: 11px;
+  color: #9aa2b1;
+}
+.connection h3 {
+  font-size: 15px;
+}
+.connection-meta {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 11px;
+  font-size: 11px;
+  margin: 18px 0 22px;
+}
+.connection-meta dt {
+  color: #929caf;
+}
+.connection-meta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.connection-options {
+  border-top: 1px solid var(--line);
+  padding-top: 17px;
+  display: flex;
+  gap: 24px;
+}
+.connection-options label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  color: #8792a6;
+}
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 23px;
+  padding-top: 17px;
+  border-top: 1px solid var(--line);
+}
+.add-card {
+  border: 1px dashed #cfd7e8;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 290px;
+  gap: 10px;
+  color: #8995ab;
+  background: #f9faff;
+}
+.add-card:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: #f3f5ff;
+}
+.add-card > span {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: #edf0f8;
+  border-radius: 50%;
+}

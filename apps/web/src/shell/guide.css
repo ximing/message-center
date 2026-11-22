@@ -1,0 +1,8 @@
+.guide-content p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 9px 0;
+}
+.guide-content section + section {
+  margin-top: 10px;
+}

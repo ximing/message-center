@@ -1,0 +1,9 @@
+.form-intro {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 10px 0 23px;
+}
+.field-group .form-intro {
+  font-size: 11px;
+  margin: 14px 0 0;
+}

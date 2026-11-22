@@ -1,0 +1,9 @@
+.toast button {
+  color: inherit;
+  padding: 0;
+}
+.toast button svg {
+  width: 14px;
+  height: 14px;
+  color: #c3ccdc;
+}

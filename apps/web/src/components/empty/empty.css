@@ -1,0 +1,15 @@
+.empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+.empty svg {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 10px;
+  color: #a6b0c8;
+}
+.empty p {
+  margin: 7px 0 14px;
+}
