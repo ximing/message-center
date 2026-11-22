@@ -1,0 +1,14 @@
+{
+  "name": "message-center",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter @mc/server --filter @mc/web dev",
+    "test": "pnpm --filter @mc/web test && pnpm --filter @mc/server test",
+    "typecheck": "pnpm -r typecheck"
+  }
+}
