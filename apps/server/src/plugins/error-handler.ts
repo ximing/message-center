@@ -38,7 +38,7 @@ export function registerErrorHandler(app: FastifyInstance): void {
       send(reply, 400, 'VALIDATION_ERROR', ERROR_MESSAGES.VALIDATION_ERROR);
       return;
     }
-    req.log.error({ name: error.name });
+    req.log.error({ err: error }, 'unhandled error');
     send(reply, 500, 'INTERNAL_ERROR', ERROR_MESSAGES.INTERNAL_ERROR);
   });
 
