@@ -34,6 +34,9 @@ importers:
       fastify:
         specifier: ^5.2.1
         version: 5.12.8
+      jose:
+        specifier: ^6.2.18
+        version: 6.2.18
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.3
@@ -1348,6 +1351,9 @@ packages:
 
   is-potential-custom-element-name@1.0.1:
     resolution: {integrity: sha512-bCYeRA2rVibKZd+s2625gGnGF/t7DSqDs4dP7CrLA1m7jKWz6pps0LpYLJN8Q64HtmPKJ1hrN3nzPNKFEKOUiQ==}
+
+  jose@6.2.18:
+    resolution: {integrity: sha512-doV4thUwgkrycJH4yLeqwTGIIZphHl+pk7CPReuMIhYhncmgzdko85MaCG4YQFTxqMFr1/oEH32tZuKKovcDEg==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -2890,6 +2896,8 @@ snapshots:
   ipaddr.js@2.5.0: {}
 
   is-potential-custom-element-name@1.0.1: {}
+
+  jose@6.2.18: {}
 
   js-tokens@4.0.0: {}
 

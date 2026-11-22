@@ -6,7 +6,8 @@ import { authModeFromOrigin } from './auth-logic.js';
 import { getMe, loginUser, logoutSession, refreshBearer, registerUser } from './auth.service.js';
 import { requireUser } from './authenticate.js';
 import { clearAuthCookies } from './cookies.js';
-import { oidcEnabled } from './oidc.js';
+import { resolveOidcConfig } from './oidc-logic.js';
+import { beginOidc, clearOidcCookie, completeOidc, oidcFailureLocation } from './oidc.service.js';
 
 function modeOf(req: FastifyRequest) {
   const origin = headerString(req.headers.origin);
@@ -41,14 +42,25 @@ export function registerAuthRoutes(app: FastifyInstance): void {
   });
 
   app.get('/api/auth/oidc/status', async () => {
-    return {
-      enabled: oidcEnabled({
-        OIDC_ISSUER: config.OIDC_ISSUER,
-        OIDC_CLIENT_ID: config.OIDC_CLIENT_ID,
-        OIDC_CLIENT_SECRET: config.OIDC_CLIENT_SECRET,
-        OIDC_REDIRECT_URI: config.OIDC_REDIRECT_URI,
-        OIDC_AUDIENCE: config.OIDC_AUDIENCE,
-      }),
-    };
+    return { enabled: resolveOidcConfig(config).enabled };
+  });
+
+  app.get('/api/auth/oidc/start', async (req, reply) => {
+    const query = req.query as { return?: string };
+    try {
+      return reply.redirect(await beginOidc(req, reply, query.return));
+    } catch {
+      clearOidcCookie(reply);
+      return reply.redirect(oidcFailureLocation('OIDC_UNAVAILABLE'));
+    }
+  });
+
+  app.get('/api/auth/oidc/callback', async (req, reply) => {
+    try {
+      return reply.redirect(await completeOidc(req, reply));
+    } catch {
+      clearOidcCookie(reply);
+      return reply.redirect(oidcFailureLocation('OIDC_UNAVAILABLE'));
+    }
   });
 }
