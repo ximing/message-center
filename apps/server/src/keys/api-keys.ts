@@ -49,28 +49,33 @@ export async function createApiKey(
   input: CreateApiKeyInput,
 ): Promise<PublicApiKey & { token: string }> {
   const db = getDb();
-  const [countRow] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(apiKeys)
-    .where(and(eq(apiKeys.userId, userId), isNull(apiKeys.revokedAt)));
-  if (Number(countRow?.count ?? 0) >= API_KEY_MAX_PER_USER)
-    throw AppError.of(409, "API_KEY_LIMIT");
+  return db.transaction(async (tx) => {
+    await tx.execute(
+      sql`select id from users where id = ${userId} for update`,
+    );
+    const [countRow] = await tx
+      .select({ count: sql<number>`count(*)::int` })
+      .from(apiKeys)
+      .where(and(eq(apiKeys.userId, userId), isNull(apiKeys.revokedAt)));
+    if (Number(countRow?.count ?? 0) >= API_KEY_MAX_PER_USER)
+      throw AppError.of(409, "API_KEY_LIMIT");
 
-  const token = generateApiKey();
-  const inserted = await db
-    .insert(apiKeys)
-    .values({
-      userId,
-      name: input.name,
-      note: input.note,
-      tokenHash: hashApiKey(token),
-      tokenEncrypted: encryptSecret(token),
-      tokenPreview: previewSecret(token),
-    })
-    .returning();
-  const row = inserted[0];
-  if (!row) throw AppError.of(500, "INTERNAL_ERROR");
-  return { ...toPublic(row), token };
+    const token = generateApiKey();
+    const inserted = await tx
+      .insert(apiKeys)
+      .values({
+        userId,
+        name: input.name,
+        note: input.note,
+        tokenHash: hashApiKey(token),
+        tokenEncrypted: encryptSecret(token),
+        tokenPreview: previewSecret(token),
+      })
+      .returning();
+    const row = inserted[0];
+    if (!row) throw AppError.of(500, "INTERNAL_ERROR");
+    return { ...toPublic(row), token };
+  });
 }
 
 export async function revealApiKey(

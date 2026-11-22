@@ -518,6 +518,39 @@ describe.skipIf(!dbCtx.available)("http api", () => {
     expect(errorCode(hookDenied)).toBe("INVALID_APP_KEY");
   });
 
+  it("并发创建时未吊销密钥不超过 20 把", async () => {
+    const user = await registerUser();
+    for (let i = 0; i < 19; i += 1) {
+      await createKey(user.access, `k${i}`);
+    }
+    const [first, second] = await Promise.all([
+      server().inject({
+        method: "POST",
+        url: "/api/me/api-keys",
+        headers: bearer(user.access),
+        payload: { name: "phone", note: "race-a" },
+      }),
+      server().inject({
+        method: "POST",
+        url: "/api/me/api-keys",
+        headers: bearer(user.access),
+        payload: { name: "phone", note: "race-b" },
+      }),
+    ]);
+    const statuses = [first.statusCode, second.statusCode].sort((a, b) => a - b);
+    expect(statuses).toEqual([201, 409]);
+    const limited = first.statusCode === 409 ? first : second;
+    expect(errorCode(limited)).toBe("API_KEY_LIMIT");
+
+    const listed = await server().inject({
+      method: "GET",
+      url: "/api/me/api-keys",
+      headers: bearer(user.access),
+    });
+    expect(listed.statusCode).toBe(200);
+    expect(listed.json()).toHaveLength(20);
+  });
+
   it("replays a wechat dedup key without adding a delivery", async () => {
     const user = await registerUser();
     const key = await createKey(user.access, "n1");
