@@ -4,14 +4,19 @@ import { Button, ErrorNotice, FooterNote, Icon, PageHeader } from "@/components"
 import { MessageDetail } from "./message-detail";
 import { MessageFlow } from "./message-flow";
 import { MessageList } from "./message-list";
+import { LiveService } from "@/services/live.service";
 import { MessagesPageService } from "./messages.service";
 
 const MessagesContent = observer(function MessagesContent() {
   const s = useService(MessagesPageService);
+  const live = useService(LiveService);
   useEffect(() => {
     document.title = "消息记录 · 消息中心";
     void s.load();
   }, [s]);
+  useEffect(() => {
+    return live.subscribe(() => s.refreshQuiet());
+  }, [live, s]);
   return (
     <>
       <PageHeader

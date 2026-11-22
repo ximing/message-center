@@ -6,6 +6,22 @@ import type { Connection, MessageItem, Rule } from "@/api/types";
 import { needsAttention } from "@/lib/delivery";
 import { ManagementService } from "@/services/management.service";
 
+function deliveryStamp(item: MessageItem | undefined): string {
+  return (item?.deliveries ?? [])
+    .map((delivery) =>
+      [
+        delivery.id,
+        delivery.status,
+        delivery.attempts,
+        delivery.errorCode,
+        delivery.skipReason,
+        delivery.remoteId,
+        delivery.connectionId,
+      ].join(":"),
+    )
+    .join("|");
+}
+
 export class MessagesPageService extends ManagementService {
   items: MessageItem[] = [];
   connections: Connection[] = [];
@@ -16,6 +32,7 @@ export class MessagesPageService extends ManagementService {
   bodyError: string | null = null;
   detailSeq = 0;
   detailLoading = false;
+  refreshing = false;
   search = "";
   source = "";
   kind = "";
@@ -107,6 +124,30 @@ export class MessagesPageService extends ManagementService {
       this.body = null;
       this.bodyError = null;
       this.detailLoading = false;
+    }
+  }
+  /** Reload the list without the manual-refresh spinner. Returns false when a load is already running. */
+  async refreshQuiet(): Promise<boolean> {
+    if (this.loading || this.refreshing || this.detailLoading) return false;
+    this.refreshing = true;
+    try {
+      const next = await listMessages();
+      const open = this.openId;
+      const before = deliveryStamp(this.items.find((item) => item.id === open));
+      this.items = next;
+      if (this.page > this.totalPages) this.page = this.totalPages;
+      if (open && !next.some((item) => item.id === open)) {
+        this.reconcileSelection();
+        return true;
+      }
+      const after = deliveryStamp(next.find((item) => item.id === open));
+      if (open && before !== after) await this.select(open, true);
+      return true;
+    } catch (err) {
+      if (!isUnauthorized(err)) return false;
+      return false;
+    } finally {
+      this.refreshing = false;
     }
   }
   async load(): Promise<void> {

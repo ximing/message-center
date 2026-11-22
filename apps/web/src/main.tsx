@@ -7,9 +7,11 @@ import { setUnauthorizedHandler } from "@/api/http";
 import { App } from "@/app";
 import { UiService } from "@/services/ui.service";
 import { AuthService } from "@/services/auth.service";
+import { LiveService } from "@/services/live.service";
 
 register(AuthService);
 register(UiService);
+register(LiveService);
 
 const auth = resolve(AuthService);
 setUnauthorizedHandler(() => {

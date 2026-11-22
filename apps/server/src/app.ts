@@ -8,6 +8,7 @@ import { config } from './config.js';
 import { registerConnectionRoutes } from './connections/connections.routes.js';
 import { getDb, setDb, type Database } from './db/index.js';
 import { registerIngestRoutes } from './ingest/ingest.routes.js';
+import { registerLiveRoutes } from './live/live.routes.js';
 import { registerApiKeyRoutes } from './keys/api-keys.routes.js';
 import { registerMessageRoutes } from './messages/messages.routes.js';
 import { registerErrorHandler } from './plugins/error-handler.js';
@@ -60,6 +61,7 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
   registerConnectionRoutes(app);
   registerRuleRoutes(app);
   registerMessageRoutes(app);
+  registerLiveRoutes(app);
   registerIngestRoutes(app);
   await registerWebStatic(app);
 

@@ -22,6 +22,7 @@ import { touchApiKey } from '../keys/api-keys.js';
 import { classifyWechatType, normalizeWechatMessage } from '../wechat/parse.js';
 import { extractXmlTag } from '../wechat/xml.js';
 import { positiveMsgSvrId, sha256Hex, webhookDedupPreimage, wechatDedupPreimage } from './dedup.js';
+import { bumpLiveRevision } from '../live/revision.js';
 import { initialDelivery, selectRules } from './match.js';
 
 export interface IngestView {
@@ -106,6 +107,7 @@ async function accept(input: {
         ];
       });
       if (planned.length > 0) await tx.insert(deliveries).values(planned);
+      await bumpLiveRevision(tx, input.userId);
       return row;
     });
     return { created: true, message: toView(created) };

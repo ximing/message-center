@@ -166,6 +166,26 @@
   color: #526079;
   font-weight: 500;
 }
+.live-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #8a95a6;
+  font-size: 11px;
+}
+.live-state:before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c5ccd6;
+}
+.live-state.on {
+  color: #1f7a4d;
+}
+.live-state.on:before {
+  background: #1f9d62;
+}
 .preview-label {
   display: inline-flex;
   align-items: center;

@@ -5,6 +5,7 @@ import { getDb } from '../db/index.js';
 import { isForeignKeyViolation } from '../db/pg.js';
 import { connections, type ConnectionRow } from '../db/schema.js';
 import { AppError } from '../errors.js';
+import { bumpLiveRevision } from '../live/revision.js';
 import { outboundFetch, requestJson } from '../http/outbound.js';
 import { readRemoteIdentity, verifyPath } from './identity.js';
 import { resolveApiBase, tokenPrefixOk } from './origin.js';
@@ -92,6 +93,7 @@ export async function createConnection(
     .returning();
   const row = inserted[0];
   if (!row) throw AppError.of(500, 'INTERNAL_ERROR');
+  await bumpLiveRevision(getDb(), userId);
   return toPublic(row);
 }
 
@@ -142,6 +144,7 @@ export async function updateConnection(
     .returning();
   const row = updated[0];
   if (!row) throw AppError.of(404, 'CONNECTION_NOT_FOUND');
+  await bumpLiveRevision(getDb(), userId);
   return toPublic(row);
 }
 
@@ -152,6 +155,7 @@ export async function deleteConnection(userId: string, id: string): Promise<void
       .where(and(eq(connections.id, id), eq(connections.userId, userId)))
       .returning({ id: connections.id });
     if (removed.length === 0) throw AppError.of(404, 'CONNECTION_NOT_FOUND');
+    await bumpLiveRevision(getDb(), userId);
   } catch (err) {
     if (err instanceof AppError) throw err;
     if (isForeignKeyViolation(err)) throw AppError.of(409, 'CONNECTION_IN_USE');

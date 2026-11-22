@@ -12,16 +12,21 @@ import {
 } from "@/components";
 import { ConnectionEditor } from "./connection-editor";
 import { ConnectionList } from "./connection-list";
+import { LiveService } from "@/services/live.service";
 import { ConnectionsPageService } from "./connections.service";
 
 const ConnectionsContent = observer(function ConnectionsContent() {
   const service = useService(ConnectionsPageService);
+  const live = useService(LiveService);
   const [params] = useSearchParams();
   const editId = params.get("edit");
   useEffect(() => {
     document.title = "目的地连接 · 消息中心";
     void service.load(editId);
   }, [service, editId]);
+  useEffect(() => {
+    return live.subscribe(() => service.refreshQuiet());
+  }, [live, service]);
   return (
     <>
       <PageHeader

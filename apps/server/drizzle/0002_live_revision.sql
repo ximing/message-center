@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "live_revision" bigint DEFAULT 0 NOT NULL;

@@ -69,6 +69,13 @@ export const oidcStatusSchema = z.object({
 });
 export type OidcStatus = z.infer<typeof oidcStatusSchema>;
 
+/** Decimal revision. A missing `since` is a handshake and does not count as a change. */
+export const liveFeedSchema = z.object({
+  revision: z.string().regex(/^(?:0|[1-9]\d{0,18})$/),
+  changed: z.boolean(),
+});
+export type LiveFeed = z.infer<typeof liveFeedSchema>;
+
 export const createApiKeyInputSchema = z.object({
   name: z.string().trim().min(1).max(64),
   note: z.string().trim().max(500),

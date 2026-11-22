@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getMessage } from "@/api/messages";
+import { getMessage, listMessages } from "@/api/messages";
 import type { MessageItem } from "@/api/types";
 import { MessagesPageService } from "./messages.service";
 
@@ -66,5 +66,40 @@ describe("message selection", () => {
     expect(s.page).toBe(1);
     expect(s.filtered).toEqual([]);
     expect(s.totalPages).toBe(1);
+  });
+  it("reloads the open message when a quiet refresh sees a new delivery status", async () => {
+    vi.mocked(listMessages).mockResolvedValue([
+      { ...item("a"), deliveries: [{ id: "d", status: "delivered" }] },
+    ]);
+    vi.mocked(getMessage).mockResolvedValue({
+      ...item("a"),
+      body: "hello",
+      deliveries: [{ id: "d", status: "delivered" }],
+    });
+    const s = new MessagesPageService();
+    s.items = [{ ...item("a"), deliveries: [{ id: "d", status: "queued" }] }];
+    s.openId = "a";
+    s.body = "hello";
+    await expect(s.refreshQuiet()).resolves.toBe(true);
+    expect(getMessage).toHaveBeenCalledWith("a");
+    expect(s.body).toBe("hello");
+    expect(s.items[0]?.deliveries?.[0]?.status).toBe("delivered");
+  });
+  it("keeps the open body when a quiet refresh sees the same deliveries", async () => {
+    const row = { ...item("a"), deliveries: [{ id: "d", status: "queued" }] };
+    vi.mocked(listMessages).mockResolvedValue([row]);
+    const s = new MessagesPageService();
+    s.items = [row];
+    s.openId = "a";
+    s.body = "hello";
+    await expect(s.refreshQuiet()).resolves.toBe(true);
+    expect(getMessage).not.toHaveBeenCalled();
+    expect(s.body).toBe("hello");
+  });
+  it("does not start a quiet refresh while a load is in progress", async () => {
+    const s = new MessagesPageService();
+    s.loading = true;
+    await expect(s.refreshQuiet()).resolves.toBe(false);
+    expect(listMessages).not.toHaveBeenCalled();
   });
 });

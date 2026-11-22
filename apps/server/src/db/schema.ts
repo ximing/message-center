@@ -3,6 +3,7 @@ import {
   boolean,
   check,
   index,
+  bigint,
   integer,
   pgTable,
   text,
@@ -24,6 +25,8 @@ export const users = pgTable('users', {
   passwordHash: varchar('password_hash', { length: 255 }),
   displayName: varchar('display_name', { length: 64 }),
   sessionVersion: integer('session_version').notNull().default(0),
+  /** Bumped when this user's messages, deliveries, or connections change. */
+  liveRevision: bigint('live_revision', { mode: 'bigint' }).notNull().default(sql`0`),
   createdAt: timestamptz('created_at').notNull().defaultNow(),
   updatedAt: timestamptz('updated_at').notNull().defaultNow(),
 });

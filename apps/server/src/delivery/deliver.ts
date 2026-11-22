@@ -3,6 +3,7 @@ import { and, asc, eq, isNull, lte, or, sql } from 'drizzle-orm';
 import { decryptSecret } from '../crypto.js';
 import { getDb } from '../db/index.js';
 import { connections, deliveries, inboundMessages } from '../db/schema.js';
+import { bumpLiveRevision } from '../live/revision.js';
 import type { FetchLike } from '../http/outbound.js';
 import { deliverToProvider, type ProviderOptions } from './providers.js';
 import { shouldRetry } from './retry.js';
@@ -12,6 +13,10 @@ export interface DeliverQueuedDeps extends ProviderOptions {
   userId?: string;
   now?: Date;
   limit?: number;
+}
+
+async function noteLive(userId: string): Promise<void> {
+  await bumpLiveRevision(getDb(), userId);
 }
 
 function logDelivery(fields: {
@@ -55,7 +60,7 @@ export async function deliverQueued(deps: DeliverQueuedDeps): Promise<void> {
     const provider = row.connection.provider;
 
     if (row.connection.status !== 'active' || stopped.has(connectionId)) {
-      await db
+      const failed = await db
         .update(deliveries)
         .set({
           status: 'failed',
@@ -63,21 +68,25 @@ export async function deliverQueued(deps: DeliverQueuedDeps): Promise<void> {
           attempts: sql`${deliveries.attempts} + 1`,
           updatedAt: new Date(),
         })
-        .where(and(eq(deliveries.id, deliveryId), eq(deliveries.status, 'queued')));
+        .where(and(eq(deliveries.id, deliveryId), eq(deliveries.status, 'queued')))
+        .returning({ id: deliveries.id });
+      if (failed.length > 0) await noteLive(row.message.userId);
       logDelivery({ connectionId, provider, status: 'failed', sender, room, errorCode: 'unauthorized' });
       continue;
     }
 
     const kind = row.message.kind as MessageKind;
     if (kind !== 'text' && kind !== 'link') {
-      await db
+      const failed = await db
         .update(deliveries)
         .set({
           status: 'failed',
           errorCode: 'media_not_sent',
           updatedAt: new Date(),
         })
-        .where(and(eq(deliveries.id, deliveryId), eq(deliveries.status, 'queued')));
+        .where(and(eq(deliveries.id, deliveryId), eq(deliveries.status, 'queued')))
+        .returning({ id: deliveries.id });
+      if (failed.length > 0) await noteLive(row.message.userId);
       continue;
     }
 
@@ -91,7 +100,7 @@ export async function deliverQueued(deps: DeliverQueuedDeps): Promise<void> {
 
     const token = decryptSecret(row.connection.tokenEncrypted);
     if (!token) {
-      await db
+      const failed = await db
         .update(deliveries)
         .set({
           status: 'failed',
@@ -99,7 +108,9 @@ export async function deliverQueued(deps: DeliverQueuedDeps): Promise<void> {
           nextAttemptAt: null,
           updatedAt: new Date(),
         })
-        .where(eq(deliveries.id, deliveryId));
+        .where(eq(deliveries.id, deliveryId))
+        .returning({ id: deliveries.id });
+      if (failed.length > 0) await noteLive(row.message.userId);
       logDelivery({ connectionId, provider, status: 'failed', sender, room, errorCode: 'decrypt_failed' });
       continue;
     }
@@ -141,6 +152,7 @@ export async function deliverQueued(deps: DeliverQueuedDeps): Promise<void> {
           updatedAt: new Date(),
         })
         .where(eq(deliveries.id, deliveryId));
+      await noteLive(row.message.userId);
       logDelivery({
         connectionId,
         provider,
@@ -165,6 +177,7 @@ export async function deliverQueued(deps: DeliverQueuedDeps): Promise<void> {
           updatedAt: new Date(),
         })
         .where(eq(deliveries.id, deliveryId));
+      await noteLive(row.message.userId);
       logDelivery({ connectionId, provider, status: 'delivered', sender, room, errorCode: '' });
       continue;
     }
@@ -186,6 +199,7 @@ export async function deliverQueued(deps: DeliverQueuedDeps): Promise<void> {
           updatedAt: new Date(),
         })
         .where(eq(deliveries.id, deliveryId));
+      await noteLive(row.message.userId);
       logDelivery({
         connectionId,
         provider,
@@ -208,6 +222,7 @@ export async function deliverQueued(deps: DeliverQueuedDeps): Promise<void> {
         updatedAt: new Date(),
       })
       .where(eq(deliveries.id, deliveryId));
+    await noteLive(row.message.userId);
     logDelivery({
       connectionId,
       provider,

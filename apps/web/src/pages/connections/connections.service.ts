@@ -7,6 +7,7 @@ import {
 import { listRules } from "@/api/rules";
 import type { Connection, Provider, Rule } from "@/api/types";
 import { defaultApiBase, isProvider } from "@/lib/text";
+import { isUnauthorized } from "@/api/http";
 import { ManagementService } from "@/services/management.service";
 
 interface ConnectionForm {
@@ -33,6 +34,7 @@ export class ConnectionsPageService extends ManagementService {
   form = emptyForm();
   removeTarget: Connection | null = null;
   flagsBusy = false;
+  refreshing = false;
   get unavailable(): Connection[] {
     return this.items.filter((item) => item.status === "unauthorized");
   }
@@ -73,6 +75,33 @@ export class ConnectionsPageService extends ManagementService {
     if (!this.saving) {
       this.removeTarget = item;
       this.confirmError = null;
+    }
+  }
+  async refreshQuiet(): Promise<boolean> {
+    if (
+      this.loading ||
+      this.refreshing ||
+      this.saving ||
+      this.flagsBusy ||
+      this.editorOpen ||
+      this.removeTarget
+    ) {
+      return false;
+    }
+    this.refreshing = true;
+    try {
+      const [items, rules] = await Promise.all([
+        listConnections(),
+        listRules(),
+      ]);
+      this.items = items;
+      this.rules = rules;
+      return true;
+    } catch (err) {
+      if (!isUnauthorized(err)) return false;
+      return false;
+    } finally {
+      this.refreshing = false;
     }
   }
   async load(editId?: string | null): Promise<void> {

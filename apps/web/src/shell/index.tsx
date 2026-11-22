@@ -1,6 +1,8 @@
 import { observer, useService } from "@rabjs/react";
+import { useEffect } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import { AuthService } from "@/services/auth.service";
+import { LiveService } from "@/services/live.service";
 import { UiService } from "@/services/ui.service";
 import {
   ErrorNotice,
@@ -22,7 +24,12 @@ const LINKS: Array<{ to: string; label: string; icon: IconName }> = [
 export const Shell = observer(function Shell() {
   const auth = useService(AuthService);
   const ui = useService(UiService);
+  const live = useService(LiveService);
   const location = useLocation();
+  useEffect(() => {
+    live.start();
+    return () => live.stop();
+  }, [live]);
   if (!auth.user) return null;
   const name = auth.user.displayName || auth.user.email;
   const initial = Array.from(name)[0]?.toUpperCase() || "我";
@@ -105,6 +112,13 @@ export const Shell = observer(function Shell() {
             </b>
           </div>
           <div className="row">
+            <span
+              className={live.active ? "live-state on" : "live-state"}
+              role="status"
+              title="打开页面时，新消息、投递结果和连接状态会自动更新"
+            >
+              {live.active ? "实时" : live.degraded ? "实时已暂停" : "连接中"}
+            </span>
             <span className="preview-label">个人控制台</span>
             <span className="date">
               {new Date().toLocaleDateString("zh-CN", {
