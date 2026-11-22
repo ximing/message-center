@@ -19,7 +19,6 @@ import {
   Lock,
   LogOut,
   MessageCircle,
-  MessagesSquare,
   Mic,
   Pencil,
   Plus,
@@ -34,7 +33,6 @@ import {
 } from "lucide-react";
 
 const icons = {
-  brand: MessagesSquare,
   inbox: Inbox,
   route: Route,
   layers: Layers,
@@ -67,7 +65,7 @@ const icons = {
   eye: Eye,
 } satisfies Record<string, LucideIcon>;
 
-export type IconName = keyof typeof icons;
+export type IconName = keyof typeof icons | "brand";
 
 export function Icon({
   name,
@@ -76,6 +74,19 @@ export function Icon({
   name: IconName;
   className?: string;
 }) {
+  if (name === "brand") {
+    return (
+      <img
+        className={`brand-icon ${className}`}
+        src={`${import.meta.env.BASE_URL}favicon.svg?v=4`}
+        width={64}
+        height={64}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+      />
+    );
+  }
   const Glyph = icons[name];
   return <Glyph className={className} aria-hidden="true" />;
 }

@@ -1,4 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#f3eee4"/>
-  <path d="M7 9h18M7 16h12M7 23h18" stroke="#1c1915" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>消息结</title>
+  <desc>两个圆润回环在中心相连，连接消息的来源与去处。</desc>
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6779ef"/>
+      <stop offset="1" stop-color="#4f5fda"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="20" fill="url(#tile)"/>
+  <g transform="translate(2.56 2.56) scale(.92)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 42c-5 0-8-4-8-9V23c0-6 4-10 10-10s10 4 10 10v18c0 6 4 10 10 10s10-4 10-10V31c0-5-3-9-8-9" stroke="#fff"/>
+    <path d="M20 42c7 0 12-5 12-10s5-10 12-10" stroke="#c9d6ff"/>
+  </g>
 </svg>

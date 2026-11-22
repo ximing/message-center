@@ -51,6 +51,10 @@ COPY --from=build /app/apps/server/dist ./apps/server/dist
 COPY --from=build /app/apps/server/drizzle ./apps/server/drizzle
 COPY --from=build /app/apps/server/package.json ./apps/server/package.json
 COPY --from=web-build /app/apps/web/dist ./apps/web/dist
+# Fail the image build if the shared brand assets are missing from the final image.
+RUN test -s apps/web/dist/favicon.svg \
+ && test -s apps/web/dist/favicon.ico \
+ && test -s apps/web/dist/apple-touch-icon.png
 WORKDIR /app/apps/server
 EXPOSE 3030
 CMD ["node", "dist/index.js"]
