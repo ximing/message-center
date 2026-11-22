@@ -21,7 +21,7 @@ import { encodeLinkBody } from '../delivery/text.js';
 import { touchApiKey } from '../keys/api-keys.js';
 import { classifyWechatType, normalizeWechatMessage } from '../wechat/parse.js';
 import { extractXmlTag } from '../wechat/xml.js';
-import { sha256Hex, webhookDedupPreimage, wechatDedupPreimage } from './dedup.js';
+import { positiveMsgSvrId, sha256Hex, webhookDedupPreimage, wechatDedupPreimage } from './dedup.js';
 import { initialDelivery, selectRules } from './match.js';
 
 export interface IngestView {
@@ -160,7 +160,7 @@ export async function ingestWechat(key: ApiKeyRow, input: WechatIngestInput): Pr
     room: normalized.room,
     kind,
     body,
-    rawRef: input.msgSvrId > 0 ? String(input.msgSvrId) : `ct:${input.createTime}`,
+    rawRef: positiveMsgSvrId(input.msgSvrId) ? input.msgSvrId : `ct:${input.createTime}`,
   });
 }
 

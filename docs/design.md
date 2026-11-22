@@ -106,7 +106,20 @@ egress:   inwit | vital | aimo
 
 密码 argon2id。访问令牌是 HMAC JWT，默认 15 分钟，载荷含用户 id、类型、`sessionVersion`。刷新令牌默认 30 天。退出时 `users.session_version` 加一，旧会话失效。
 
-Cookie 名 `mc_at`、`mc_rt`。`httpOnly`、`SameSite=Lax`、签名、`path=/`。生产环境 `secure`。`Origin` 精确等于 `WEB_ORIGIN` 时种 cookie，否则把两枚令牌放进 JSON。管理接口接受 Bearer 访问 JWT，没有时再读 cookie。
+Cookie 名 `mc_at`、`mc_rt`。`httpOnly`、`SameSite=Lax`、签名、`path=/`。生产环境 `secure`。`Origin` 精确等于 `WEB_ORIGIN` 时种 cookie，否则把两枚令牌放进 JSON。管理接口接受 Bearer 访问 JWT，没有时再读 cookie。也接受下面的接口令牌。
+
+## 接口令牌
+
+脚本和 agent 用长期令牌调用管理接口。前缀 `mct_`。它不是账号密钥，也不是目的地令牌。
+
+| | 接口令牌 |
+| --- | --- |
+| 前缀 | `mct_` |
+| 能调用 | `/api/me/*` 和 `GET /api/auth/me` |
+| 不能调用 | `POST /api/v1/ingest/wechat`、`POST /api/v1/ingest/webhook`。上报仍只用 `mck_` |
+| 会话 | 退出登录不加版本、不吊销。吊销只停这一把 |
+
+存法与账号密钥相同：创建响应里给明文，AES-256-GCM 落库，SHA-256 查找，列表只给预览。每用户未吊销最多 20 个。`Authorization: Bearer mct_...`。`mck_` 打管理接口仍是 401 `INVALID_TOKEN`。`mct_` 打上报接口是 401 `INVALID_APP_KEY`。
 
 错误体：`{ "error": { "code", "message" } }`。
 
@@ -163,9 +176,9 @@ MESSAGE_CENTER_APP_KEY=mck_...
 | `body` | 拆掉群前缀后的文本；链接是 XML 里的标题和 URL | 调用方给的文本或 URL |
 | `dedup_key` | 见下 | 该 Webhook 的 `eventId` |
 
-微信群前缀算法与模块里的 `GroupMessage.parse` 相同，只在消息中心实现一份。
+微信群前缀由消息中心的 `parseGroupMessage` 拆。模块上报原文，不自己选目的地。
 
-微信去重键按用户隔离。`msgSvrId > 0` 时原文是换行拼接的 `wechat/v1`、talker、十进制 type、十进制 msgSvrId。否则把最后一段换成 `ct={createTime}` 和原文的 SHA-256。模块仍保留 10 分钟进程内去重，只为少打重复请求。权威去重是 `(user_id, dedup_key)`。
+微信去重键按用户隔离。`msgSvrId` 收成十进制字符串。安全整数也可以用 JSON 数字，服务端收成同一段数字。超过 `Number.MAX_SAFE_INTEGER` 的 JSON 数字直接 400，避免舍入之后去重键对不上。这段数字为正时，原文是换行拼接的 `wechat/v1`、talker、十进制 type、这段 `msgSvrId`。否则把最后一段换成 `ct={createTime}` 和原文的 SHA-256。模块仍保留 10 分钟进程内去重，只为少打重复请求。权威去重是 `(user_id, dedup_key)`。
 
 Webhook 的 `eventId` 在该用户下唯一。调用方不传则 400。同一把或另一把密钥再次带上同一个 `eventId`，都视为这一用户的重复上报。
 
@@ -188,7 +201,7 @@ Authorization: Bearer mck_...
   "talker": "wxid_or_room",
   "fromUser": "wxid_or_room",
   "content": "原文，群消息可带发送者前缀",
-  "msgSvrId": 0,
+  "msgSvrId": "6174103951083978474",
   "createTime": 0
 }
 ```
@@ -376,6 +389,7 @@ JSON 调用的连接 8 秒、读取 15 秒。IO 错误和 502/503/504 最多再�
 | 风险 | 处理 |
 | --- | --- |
 | APK 或 Webhook 配置里的账号密钥被读出 | 只能上报，不能改规则或读目的地令牌。吊销即时生效。三种目的地令牌都不在调用方 |
+| 接口令牌被读出 | 等同于这个用户的管理会话：能改规则、读消息、再次显示密钥和目的地令牌。不能上报。退出登录不停它，只能吊销这一把 |
 | 同一把密钥两处复用 | 允许。泄露后吊销这一把，另一把不受影响 |
 | 日志带出令牌或正文 | 不记 Authorization、正文和对方 `details` |
 | 钥匙串用户 | 凭证只进入它所属用户的库，请求体不能指定别人的 `user_id` |

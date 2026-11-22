@@ -1056,6 +1056,84 @@ describe.skipIf(!dbCtx.available)("http api", () => {
     }
   });
 
+  it("keeps msgSvrId digits that do not fit in a JSON number", async () => {
+    const user = await registerUser();
+    const key = await createKey(user.access, "svr");
+    const vital = await createConnection(user.access, "vital");
+    await createRule(user.access, vital.id);
+    const big = "6174103951083978474";
+    const talker = "wxid_big";
+    handler = (call) => {
+      const known = identity(call);
+      if (known) return known;
+      if (call.method === "POST" && call.url.endsWith("/api/v1/inbox")) {
+        return jsonRes(201, { id: "inbox-big" });
+      }
+      throw new Error(`unexpected ${call.method} ${call.url}`);
+    };
+
+    const created = await postWechat(key.token, {
+      talker,
+      fromUser: talker,
+      msgSvrId: big,
+      content: "kept",
+    });
+    expect(created.statusCode).toBe(202);
+    const again = await postWechat(key.token, {
+      talker,
+      fromUser: talker,
+      msgSvrId: big,
+      content: "kept again",
+    });
+    expect(again.statusCode).toBe(200);
+    expect((again.json() as { id: string }).id).toBe(
+      (created.json() as { id: string }).id,
+    );
+
+    calls.length = 0;
+    await deliverQueued({
+      fetch: fetchImpl,
+      userId: user.id,
+      sleep: async () => {},
+    });
+    const textPost = calls.find(
+      (call) => call.method === "POST" && call.url.endsWith("/api/v1/inbox"),
+    );
+    expect(textPost?.headers["Idempotency-Key"]).toBe(
+      sha256(`wechat/v1\n${talker}\n1\n${big}`),
+    );
+
+    const sameDigits = await postWechat(key.token, {
+      talker: "wxid_digits",
+      fromUser: "wxid_digits",
+      msgSvrId: 88001,
+      content: "digits",
+    });
+    expect(sameDigits.statusCode).toBe(202);
+    const asString = await postWechat(key.token, {
+      talker: "wxid_digits",
+      fromUser: "wxid_digits",
+      msgSvrId: "88001",
+      content: "digits",
+    });
+    expect(asString.statusCode).toBe(200);
+    expect((asString.json() as { id: string }).id).toBe(
+      (sameDigits.json() as { id: string }).id,
+    );
+
+    const unsafe = await server().inject({
+      method: "POST",
+      url: "/api/v1/ingest/wechat",
+      headers: {
+        ...bearer(key.token),
+        "content-type": "application/json",
+      },
+      payload: `{"moduleBuild":"test","type":1,"isSend":0,"talker":"wxid_friend","fromUser":"wxid_friend","content":"rounded","msgSvrId":${big},"createTime":1700000000}`,
+    });
+    expect(unsafe.statusCode).toBe(400);
+    expect(errorCode(unsafe)).toBe("VALIDATION_ERROR");
+  });
+
   it("sends the webhook preimage hash and source manual", async () => {
     const user = await registerUser();
     const key = await createKey(user.access, "hook-vital");

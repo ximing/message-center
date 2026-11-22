@@ -142,6 +142,21 @@ export const patchRuleInputSchema = z
   });
 export type PatchRuleInput = z.infer<typeof patchRuleInputSchema>;
 
+/** Signed long, no leading zeros. JavaScript numbers above MAX_SAFE_INTEGER are rejected. */
+const msgSvrIdDecimal = /^-?(?:0|[1-9]\d{0,18})$/;
+
+export const msgSvrIdSchema = z
+  .union([
+    z
+      .number()
+      .int()
+      .refine((value) => Number.isSafeInteger(value), {
+        message: "msgSvrId exceeds Number.MAX_SAFE_INTEGER; send a decimal string",
+      }),
+    z.string().regex(msgSvrIdDecimal),
+  ])
+  .transform((value) => (typeof value === "number" ? String(value) : value));
+
 export const wechatIngestSchema = z.object({
   moduleBuild: z.string().min(1).max(128),
   type: z.number().int(),
@@ -149,7 +164,7 @@ export const wechatIngestSchema = z.object({
   talker: z.string().max(512),
   fromUser: z.string().max(512),
   content: z.string().max(700_000),
-  msgSvrId: z.number().int(),
+  msgSvrId: msgSvrIdSchema,
   createTime: z.number().int(),
 });
 export type WechatIngestInput = z.infer<typeof wechatIngestSchema>;
