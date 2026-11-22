@@ -6,6 +6,7 @@
 #
 # migrate 跑完退出。server 同时托管网页和 /api。健康检查是 GET /health。
 # 入口 nginx 把 https://msg.aimo.plus 反代到宿主机 13012。
+# 源站地址在入口机的 msg-origin.upstream，不进仓库。
 
 name: message-center
 
