@@ -42,7 +42,18 @@ export function registerErrorHandler(app: FastifyInstance): void {
     send(reply, 500, 'INTERNAL_ERROR', ERROR_MESSAGES.INTERNAL_ERROR);
   });
 
-  app.setNotFoundHandler((_req, reply) => {
+  app.setNotFoundHandler((req, reply) => {
+    // 生产环境 server 托管单页应用：页面路由回退到 index.html，接口保持 JSON 404。
+    const pathOnly = req.url.split('?', 1)[0] ?? '';
+    if (
+      app.webDistRoot &&
+      req.method === 'GET' &&
+      !pathOnly.startsWith('/api') &&
+      pathOnly !== '/health'
+    ) {
+      void reply.sendFile('index.html');
+      return;
+    }
     send(reply, 404, 'NOT_FOUND', ERROR_MESSAGES.NOT_FOUND);
   });
 }

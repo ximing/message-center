@@ -57,7 +57,9 @@ export const envSchema = z.object({
 export const config = envSchema.parse(process.env);
 export type Config = z.infer<typeof envSchema>;
 
-export function assertDatabaseName(expected: 'message_center_dev' | 'message_center_test'): void {
+export function assertDatabaseName(
+  expected: 'message_center_dev' | 'message_center_test' | 'message_center_prod',
+): void {
   const name = config.PG_DATABASE;
   if (name !== expected || name.startsWith('inwit') || name.startsWith('vital')) {
     throw new Error(`refusing database ${name}, expected ${expected}`);

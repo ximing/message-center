@@ -11,6 +11,7 @@ import { registerApiKeyRoutes } from './keys/api-keys.routes.js';
 import { registerMessageRoutes } from './messages/messages.routes.js';
 import { registerErrorHandler } from './plugins/error-handler.js';
 import { registerRuleRoutes } from './rules/rules.routes.js';
+import { registerWebStatic } from './web-static.js';
 import './types.js';
 
 export interface BuildAppOptions {
@@ -25,6 +26,7 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
   });
   app.decorate('db', getDb());
   app.decorate('authenticate', authenticate);
+  app.decorate('webDistRoot', '');
 
   await app.register(cors, {
     origin: config.WEB_ORIGIN,
@@ -57,6 +59,7 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
   registerRuleRoutes(app);
   registerMessageRoutes(app);
   registerIngestRoutes(app);
+  await registerWebStatic(app);
 
   return app;
 }
